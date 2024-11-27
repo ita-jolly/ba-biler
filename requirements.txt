@@ -1,0 +1,7 @@
+flask
+requests
+gunicorn
+python-dotenv
+python-dateutil
+flask-jwt-extended
+flasgger
