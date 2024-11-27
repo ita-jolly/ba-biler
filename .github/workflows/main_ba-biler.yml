@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - ba-biler
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://index.docker.io/v1/
+        username: ${{ secrets.AzureAppService_ContainerUsername_9ebc5d8a10334cda95ee3f6c559d39a1 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_c49d01c3ed584b4a85a3f3e74a57ad1c }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_9ebc5d8a10334cda95ee3f6c559d39a1 }}/ba-biler:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'ba-biler'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_a31c2645a2824e228e1b5b4b34d586cc }}
+        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_9ebc5d8a10334cda95ee3f6c559d39a1 }}/ba-biler:${{ github.sha }}'
