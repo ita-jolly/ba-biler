@@ -32,7 +32,7 @@ def get_biler():
 @app.route('/biler/udlejet', methods=['GET'])
 @swag_from('swagger/get_udlejet.yml')
 def get_udlejet():
-    biler = db_service.get_udlejet()
+    biler = db_service.get_udlejede_biler()
 
     if biler is None:
         response = make_response({'message': 'Ingen biler er udlejet.'}, 404)
