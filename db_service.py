@@ -33,7 +33,7 @@ def generate_nummerplade():
 def generate_biler(num_biler=100):
     biler = []
     nummerplader = set()
-    
+
     while len(biler) < num_biler:
         nummerplade = generate_nummerplade()
         if nummerplade not in nummerplader:
@@ -42,7 +42,7 @@ def generate_biler(num_biler=100):
             maerke = random.choice(bil_maerker)
             udlejnings_status = random.choice([True, False])
             abonnement_pris = random.choice(abonnement_priser)
-            
+
             biler.append((nummerplade, bil_type, maerke, udlejnings_status, abonnement_pris))
     return biler
 
@@ -67,13 +67,33 @@ def get_biler():
         cur.execute('SELECT * FROM biler')
         rows = cur.fetchall()
 
-        all_biler = [{'nummerplade': row[0], 
-                      'bil_type': row[1], 
-                      'maerke': row[2], 
-                      'udlejnings_status': row[3], 
-                      'abonnement_pris': row[4]} 
+        all_biler = [{'nummerplade': row[0],
+                      'bil_type': row[1],
+                      'maerke': row[2],
+                      'udlejnings_status': row[3],
+                      'abonnement_pris': row[4]}
                       for row in rows]
         if len(all_biler) == 0:
             return None
 
         return all_biler
+
+
+def get_udlejede_biler():
+    with sqlite3.connect(db_path) as con:
+        cur = con.cursor()
+        cur.execute('SELECT * FROM biler WHERE udlejnings_status = 1')
+        rows = cur.fetchall()
+
+        if len(rows) == 0:
+            return None
+
+        udlejede_biler = [{'nummerplade': row[0],
+                           'bil_type': row[1],
+                           'maerke': row[2],
+                           'udlejnings_status': row[3],
+                           'abonnement_pris': row[4]}
+                           for row in rows]
+
+
+        return udlejede_biler
