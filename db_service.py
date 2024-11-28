@@ -8,20 +8,6 @@ load_dotenv()
 
 db_path = os.getenv('DB_PATH')
 
-
-def init():
-    """Initialize the "biler" table if it doesn't exist."""
-    with sqlite3.connect(db_path) as con:
-        cur = con.cursor()
-        cur.execute('''CREATE TABLE IF NOT EXISTS biler(
-                    nummerplade TEXT PRIMARY KEY,
-                    bil_type TEXT,
-                    maerke TEXT,
-                    udlejnings_status BOOLEAN,
-                    abonnement_pris DOUBLE)
-        ''')
-    con.commit()
-
 bil_maerker = ["Toyota", "Ford", "BMW"]
 abonnement_priser = [5499.00, 6699.00, 7999.00]
 
@@ -46,19 +32,32 @@ def generate_biler(num_biler=100):
             biler.append((nummerplade, bil_type, maerke, udlejnings_status, abonnement_pris))
     return biler
 
-# Insert generated biler into the database
-def insert_biler_to_db(biler):
+
+def init():
+    """Initialize the "biler" table if it doesn't exist."""
     with sqlite3.connect(db_path) as con:
         cur = con.cursor()
-        cur.executemany('''
-            INSERT INTO biler (nummerplade, bil_type, maerke, udlejnings_status, abonnement_pris)
-            VALUES (?, ?, ?, ?, ?)
-        ''', biler)
-        con.commit()
+        cur.execute('''CREATE TABLE IF NOT EXISTS biler(
+                    nummerplade TEXT PRIMARY KEY,
+                    bil_type TEXT,
+                    maerke TEXT,
+                    udlejnings_status BOOLEAN,
+                    abonnement_pris DOUBLE)
+        ''')
 
-# Generate biler and insert them into the database
-biler = generate_biler(100)
-insert_biler_to_db(biler)
+        # Generate biler and insert them into the database
+        biler = generate_biler(100)
+
+        cur.execute('SELECT COUNT(*) FROM biler')
+        row_count = cur.fetchone()[0]
+
+        if row_count == 0:
+            cur.executemany('''
+                INSERT INTO biler (nummerplade, bil_type, maerke, udlejnings_status, abonnement_pris)
+                VALUES (?, ?, ?, ?, ?)
+            ''', biler)
+
+    con.commit()
 
 
 def get_biler():
