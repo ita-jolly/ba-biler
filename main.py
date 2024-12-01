@@ -34,4 +34,4 @@ def get_biler():
 # @swag_from('swagger/get_template.yml')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5000)
