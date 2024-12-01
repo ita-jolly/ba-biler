@@ -96,3 +96,17 @@ def get_udlejede_biler():
 
 
         return udlejede_biler
+
+def update_udlejnings_status(nummerplade, status):
+    with sqlite3.connect(db_path) as con:
+        cur = con.cursor()
+        cur.execute(
+            '''UPDATE biler 
+                SET udlejnings_status = ? 
+                WHERE nummerplade = ?''',
+            (status, nummerplade)
+        )
+        con.commit()
+        if cur.rowcount == 0:
+            return None  # Nummerplade not found
+    return True  # Update successful

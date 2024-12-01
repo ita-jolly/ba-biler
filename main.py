@@ -41,6 +41,33 @@ def get_udlejet():
 
     return response
 
+@app.route('/biler/<string:nummerplade>', methods=['PATCH'])
+def update_bil_status(nummerplade):
+    try:
+        # Parse the incoming JSON
+        data = request.get_json()
+
+        # Check if 'udlejnings_status' is present
+        if 'udlejnings_status' not in data:
+            return jsonify({"error": "Missing 'udlejnings_status' field"}), 400
+
+        # Update the status using db_service
+        updated = db_service.update_udlejnings_status(
+            nummerplade=nummerplade,
+            status=data['udlejnings_status']
+        )
+
+        # Handle different outcomes
+        if updated is None:
+            return jsonify({"error": f"Nummerplade {nummerplade} not found in biler database"}), 404
+        elif not updated:
+            return jsonify({"error": "Failed to update the record due to a database error."}), 500
+
+        return jsonify({"message": f"Udlejnings_status for nummerplade {nummerplade} updated to {data['udlejnings_status']}."}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
 # @app.route('/gettemplate', methods=['GET'])
 # @swag_from('swagger/get_template.yml')
 
