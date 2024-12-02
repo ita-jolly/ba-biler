@@ -41,6 +41,19 @@ def get_udlejet():
 
     return response
 
+@app.route('/biler/udlejet/total', methods=['GET'])
+@swag_from('swagger/get_udlejet_total.yml')
+def get_udlejet_total():
+    biler = db_service.get_udlejede_biler()
+
+    if biler is None:
+        return make_response({'message': 'Ingen biler er udlejet.'}, 404)
+
+    total = sum([bil['abonnement_pris'] for bil in biler])
+
+    return make_response({'total': total}, 200)
+
+
 @app.route('/biler/<string:nummerplade>', methods=['PATCH'])
 def update_bil_status(nummerplade):
     try:
