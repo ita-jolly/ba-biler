@@ -1,0 +1,21 @@
+tags:
+  - name: Biler
+summary: Get Total Udlejet
+description: Få en total måneds-pris for alle udlejede biler
+
+responses:
+  200:
+    description: Total af udlejede biler
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          total:
+            type: integer
+            example: 1000
+  404:
+    description: No guests found
+
+  500:
+    description: Internal server error
