@@ -20,26 +20,46 @@ def index():
 @app.route('/biler', methods=['GET'])
 @swag_from('swagger/get_biler.yml')
 def get_biler():
-    biler = db_service.get_biler()
+    try:
+        biler = db_service.get_biler()
 
-    if biler is None:
-        response = make_response({'message': 'Ingen biler fundet'}, 404)
-    else:
-        response = make_response(biler, 200)
+        if biler is None:
+            return make_response({'message': 'Ingen biler fundet'}, 404)
 
-    return response
+        return make_response(biler, 200)
+    except Exception as e:
+        return make_response({"error": f"An unexpected error occurred: {str(e)}"}, 500)
+
 
 @app.route('/biler/udlejet', methods=['GET'])
 @swag_from('swagger/get_udlejet.yml')
 def get_udlejet():
-    biler = db_service.get_udlejede_biler()
+    try:
+        biler = db_service.get_udlejede_biler()
 
-    if biler is None:
-        response = make_response({'message': 'Ingen biler er udlejet.'}, 404)
-    else:
-        response = make_response(biler, 200)
+        if biler is None:
+            return make_response({'message': 'Ingen biler er udlejet.'}, 404)
 
-    return response
+        return make_response(biler, 200)
+
+    except Exception as e:
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
+@app.route('/biler/udlejet/total', methods=['GET'])
+@swag_from('swagger/get_udlejet_total.yml')
+def get_udlejet_total():
+    try:
+        biler = db_service.get_udlejede_biler()
+
+        if biler is None:
+            return make_response({'message': 'Ingen biler er udlejet.'}, 404)
+
+        total = sum([bil['abonnement_pris'] for bil in biler])
+
+        return make_response({'total': total}, 200)
+
+    except Exception as e:
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 @app.route('/biler/<string:nummerplade>', methods=['PATCH'])
 def update_bil_status(nummerplade):
