@@ -62,6 +62,7 @@ def get_udlejet_total():
         return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 @app.route('/biler/<string:nummerplade>', methods=['PATCH'])
+@swag_from('swagger/update_bil_status.yml')
 def update_bil_status(nummerplade):
     try:
         # Parse the incoming JSON
@@ -88,8 +89,6 @@ def update_bil_status(nummerplade):
     except Exception as e:
         return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
-# @app.route('/gettemplate', methods=['GET'])
-# @swag_from('swagger/get_template.yml')
 
 if __name__ == '__main__':
     app.run(port=5000)
