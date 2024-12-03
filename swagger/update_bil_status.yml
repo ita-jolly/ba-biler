@@ -1,0 +1,31 @@
+tags:
+  - biler
+summary: Update rental status of a car
+parameters:
+  - name: nummerplade
+    in: path
+    required: true
+    type: string
+    description: The license plate of the car
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        udlejnings_status:
+          type: string
+responses:
+  200:
+    description: Rental status updated
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+  400:
+    description: Missing 'udlejnings_status' field
+  404:
+    description: Car not found
+  500:
+    description: Unexpected error

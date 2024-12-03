@@ -74,8 +74,8 @@ def update_bil_status(nummerplade):
 
         # Update the status using db_service
         updated = db_service.update_udlejnings_status(
-            nummerplade=nummerplade,
-            status=data['udlejnings_status']
+            nummerplade = nummerplade,
+            status = data['udlejnings_status']
         )
 
         # Handle different outcomes

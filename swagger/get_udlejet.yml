@@ -1,0 +1,22 @@
+tags:
+  - biler
+summary: Get all rented cars
+responses:
+  200:
+    description: A list of rented cars
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          nummerplade:
+            type: string
+          maerke:
+            type: string
+          abonnement_pris:
+            type: number
+            format: float
+  404:
+    description: No rented cars found
+  500:
+    description: Unexpected error
