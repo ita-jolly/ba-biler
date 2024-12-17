@@ -15,7 +15,37 @@ db_service.init()
 
 @app.route('/')
 def index():
-  return "Welcome to API"
+    endpoints = [
+        {
+            "path": "/apidocs",
+            "method": "GET",
+            "description": "Endpoint documentation"
+        },
+        {
+            "path": "/biler",
+            "method": "GET",
+            "description": "Get biler"
+        },
+        {
+            "path": "/biler/udlejet",
+            "method": "GET",
+            "description": "Get udlejet biler"
+        },
+        {
+            "path": "/biler/udlejet/total",
+            "method": "GET",
+            "description": "Get total udlejet biler"
+        },
+        {
+            "path": "/biler/<string:nummerplade>",
+            "method": "PATCH",
+            "description": "Update bil status"
+        }
+    ]
+    return jsonify({
+        "Service": "ba-biler Microservice",
+        "Available endpoints": endpoints
+    })
 
 @app.route('/biler', methods=['GET'])
 @swag_from('swagger/get_biler.yml')
